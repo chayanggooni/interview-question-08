@@ -1,4 +1,5 @@
 using InterviewQuestion08.Api.Data;
+using InterviewQuestion08.Api.Features.Questions;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,8 @@ var connectionString =
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(connectionString));
 
+builder.Services.AddScoped<QuestionService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -21,6 +24,6 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+app.MapQuestionEndpoints();
 
 app.Run();
