@@ -1,0 +1,31 @@
+<div class="container py-4">
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="mb-3">
+      <label for="questionText" class="form-label">คำถาม</label>
+
+      <input id="questionText" type="text" class="form-control" formControlName="questionText" />
+      @if (form.controls.questionText.touched && form.controls.questionText.invalid) {
+        <div class="text-danger">กรุณากรอกคำถาม</div>
+      }
+    </div>
+
+    <div formArrayName="choices">
+      @for (control of form.controls.choices.controls; track $index; let index = $index) {
+        <div class="mb-3">
+          <label class="form-label"> คำตอบ {{ index + 1 }} </label>
+
+          <input type="text" class="form-control" [formControlName]="index" />
+          @if (control.touched && control.invalid) {
+            <div class="text-danger">กรุณากรอกคำตอบ {{ index + 1 }}</div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-primary">Save</button>
+
+      <button type="button" class="btn btn-secondary" routerLink="/questions">Cancel</button>
+    </div>
+  </form>
+</div>
