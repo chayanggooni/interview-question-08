@@ -1,0 +1,26 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: src/api/Dockerfile
+
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Data Source=/app/data/interview-question-08.db
+
+    volumes:
+      - sqlite-data:/app/data
+
+  web:
+    build:
+      context: .
+      dockerfile: src/web/Dockerfile
+
+    ports:
+      - "4200:80"
+
+    depends_on:
+      - api
+
+volumes:
+  sqlite-data:
