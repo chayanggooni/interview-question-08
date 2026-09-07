@@ -8,4 +8,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 {
   public DbSet<Question> Questions => Set<Question>();
   public DbSet<QuestionChoice> QuestionChoices => Set<QuestionChoice>();
+
+  protected override void OnModelCreating(ModelBuilder modelBuilder)
+  {
+    modelBuilder.ApplyConfigurationsFromAssembly(
+        typeof(AppDbContext).Assembly
+    );
+  }
 }
