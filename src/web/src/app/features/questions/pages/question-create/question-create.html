@@ -33,7 +33,14 @@
         {{ isSaving() ? 'Saving...' : 'Save' }}
       </button>
 
-      <button type="button" class="btn btn-secondary" routerLink="/questions">Cancel</button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        routerLink="/questions"
+        [disabled]="isSaving()"
+      >
+        Cancel
+      </button>
     </div>
   </form>
 </div>

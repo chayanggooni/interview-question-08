@@ -15,6 +15,7 @@ export class QuestionList {
   protected readonly questions = signal<Question[]>([]);
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly deletingQuestionId = signal<number | null>(null);
 
   constructor() {
     this.loadQuestions();
@@ -32,6 +33,28 @@ export class QuestionList {
       error: () => {
         this.errorMessage.set('Unable to load questions.');
         this.isLoading.set(false);
+      },
+    });
+  }
+
+  protected deleteQuestion(id: number): void {
+    const confirmed = confirm('Are you sure you want to delete this question?');
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.deletingQuestionId.set(id);
+    this.errorMessage.set(null);
+
+    this.questionService.deleteQuestion(id).subscribe({
+      next: () => {
+        this.deletingQuestionId.set(null);
+        this.loadQuestions();
+      },
+      error: () => {
+        this.deletingQuestionId.set(null);
+        this.errorMessage.set('Unable to delete the question.');
       },
     });
   }
