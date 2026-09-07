@@ -22,8 +22,16 @@
       }
     </div>
 
+    @if (errorMessage()) {
+      <div class="alert alert-danger">
+        {{ errorMessage() }}
+      </div>
+    }
+
     <div class="d-flex gap-2">
-      <button type="submit" class="btn btn-primary">Save</button>
+      <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
+        {{ isSaving() ? 'Saving...' : 'Save' }}
+      </button>
 
       <button type="button" class="btn btn-secondary" routerLink="/questions">Cancel</button>
     </div>

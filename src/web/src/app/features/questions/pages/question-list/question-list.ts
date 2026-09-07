@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Question } from '../../models/question.model';
 import { RouterLink } from '@angular/router';
+import { QuestionService } from '../../services/question.service';
 
 @Component({
   imports: [RouterLink],
@@ -9,26 +10,29 @@ import { RouterLink } from '@angular/router';
   templateUrl: './question-list.html',
 })
 export class QuestionList {
-  protected readonly questions = signal<Question[]>([
-    {
-      id: 1,
-      text: 'ข้อใดเป็นจำนวนเฉพาะ',
-      choices: [
-        { id: 1, choiceNo: 1, text: '3' },
-        { id: 2, choiceNo: 2, text: '5' },
-        { id: 3, choiceNo: 3, text: '9' },
-        { id: 4, choiceNo: 4, text: '11' },
-      ],
-    },
-    {
-      id: 2,
-      text: '2 × 2 มีค่าเท่าไร',
-      choices: [
-        { id: 5, choiceNo: 1, text: '1' },
-        { id: 6, choiceNo: 2, text: '2' },
-        { id: 7, choiceNo: 3, text: '3' },
-        { id: 8, choiceNo: 4, text: '4' },
-      ],
-    },
-  ]);
+  private readonly questionService = inject(QuestionService);
+
+  protected readonly questions = signal<Question[]>([]);
+  protected readonly isLoading = signal(false);
+  protected readonly errorMessage = signal<string | null>(null);
+
+  constructor() {
+    this.loadQuestions();
+  }
+
+  private loadQuestions(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+
+    this.questionService.getQuestions().subscribe({
+      next: (questions) => {
+        this.questions.set(questions);
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.errorMessage.set('Unable to load questions.');
+        this.isLoading.set(false);
+      },
+    });
+  }
 }

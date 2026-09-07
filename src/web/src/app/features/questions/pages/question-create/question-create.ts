@@ -1,6 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { QuestionService } from '../../services/question.service';
+import { finalize } from 'rxjs';
 
 @Component({
   imports: [ReactiveFormsModule, RouterLink],
@@ -10,6 +12,11 @@ import { RouterLink } from '@angular/router';
 })
 export class QuestionCreate {
   private readonly fb = inject(NonNullableFormBuilder);
+  private readonly questionService = inject(QuestionService);
+  private readonly router = inject(Router);
+
+  protected readonly isSaving = signal(false);
+  protected readonly errorMessage = signal<string | null>(null);
 
   private createChoiceControl() {
     return this.fb.control('', [Validators.required, Validators.maxLength(200)]);
@@ -32,8 +39,21 @@ export class QuestionCreate {
       return;
     }
 
-    const payload = this.form.getRawValue();
+    this.isSaving.set(true);
+    this.errorMessage.set(null);
 
-    console.log(payload);
+    const request = this.form.getRawValue();
+
+    this.questionService
+      .createQuestion(request)
+      .pipe(finalize(() => this.isSaving.set(false)))
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/questions']);
+        },
+        error: () => {
+          this.errorMessage.set('Unable to save the question. Please try again.');
+        },
+      });
   }
 }

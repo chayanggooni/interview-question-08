@@ -1,11 +1,16 @@
 export interface Question {
   id: number;
-  text: string;
+  questionText: string;
   choices: QuestionChoice[];
 }
 
 export interface QuestionChoice {
   id: number;
   choiceNo: number;
-  text: string;
+  choiceText: string;
+}
+
+export interface CreateQuestionRequest {
+  questionText: string;
+  choices: string[];
 }
