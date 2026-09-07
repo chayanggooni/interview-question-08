@@ -1,0 +1,28 @@
+# Node / Angular
+node_modules/
+dist/
+.angular/
+
+# .NET
+bin/
+obj/
+
+# IDE
+.vs/
+.idea/
+.vscode/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Coverage
+coverage/
+TestResults/
