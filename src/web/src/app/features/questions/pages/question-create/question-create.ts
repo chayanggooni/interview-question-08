@@ -19,11 +19,18 @@ export class QuestionCreate {
   protected readonly errorMessage = signal<string | null>(null);
 
   private createChoiceControl() {
-    return this.fb.control('', [Validators.required, Validators.maxLength(200)]);
+    return this.fb.control('', [
+      Validators.required,
+      Validators.pattern(/\S/),
+      Validators.maxLength(200),
+    ]);
   }
 
   protected readonly form = this.fb.group({
-    questionText: ['', [Validators.required, Validators.maxLength(500)]],
+    questionText: [
+      '',
+      [Validators.required, Validators.pattern(/\S/), Validators.maxLength(500)],
+    ],
 
     choices: this.fb.array([
       this.createChoiceControl(),
@@ -42,7 +49,11 @@ export class QuestionCreate {
     this.isSaving.set(true);
     this.errorMessage.set(null);
 
-    const request = this.form.getRawValue();
+    const formValue = this.form.getRawValue();
+    const request = {
+      questionText: formValue.questionText.trim(),
+      choices: formValue.choices.map((choice) => choice.trim()),
+    };
 
     this.questionService
       .createQuestion(request)
